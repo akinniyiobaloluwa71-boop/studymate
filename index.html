@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="StudyMate helps students learn, practise, and track progress in a simple, focused study experience."
+    />
+    <title>StudyMate — Learn, Practise, Improve</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="#/home" class="brand" aria-label="StudyMate home">
+        <span class="brand-mark">SM</span>
+        <span class="brand-text">StudyMate</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#/home">Home</a>
+        <a href="#/subjects">Subjects</a>
+        <a href="#/dashboard">Dashboard</a>
+        <a href="#/search">Search</a>
+        <button type="button" class="level-button" data-action="go-level">
+          Change level
+        </button>
+      </nav>
+    </header>
+
+    <main id="app" class="app-main" tabindex="-1"></main>
+
+    <footer class="site-footer">
+      <div>StudyMate</div>
+      <div>progress is saved in this browser only</div>
+      <div id="current-year"></div>
+    </footer>
+
+    <noscript>
+      <div class="noscript-message">
+        JavaScript is required to use StudyMate.
+      </div>
+    </noscript>
+
+    <script src="js/data.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

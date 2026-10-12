@@ -1,0 +1,91 @@
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body,
+.lesson-text,
+.question-text,
+.topic-item,
+.attempt-row {
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+}
+
+@media (max-width: 599px) {
+  .site-nav {
+    flex: 1 1 100%;
+    gap: var(--space-1);
+  }
+
+  .site-nav > a,
+  .site-nav > button,
+  .nav-link {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline: var(--space-2);
+    font-size: 0.9rem;
+  }
+
+  form .btn,
+  .quiz-nav .btn,
+  .quiz-nav button,
+  .quiz-nav a {
+    width: 100%;
+  }
+
+  .quiz-nav {
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 600px) {
+  .card-grid,
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lesson-header,
+  .lesson-text,
+  .objectives-list,
+  .example-box,
+  .key-points,
+  .summary-box {
+    padding-inline: var(--space-4);
+  }
+}
+
+@media (min-width: 900px) {
+  .site-header {
+    flex-wrap: nowrap;
+  }
+
+  .site-nav {
+    margin-left: auto;
+  }
+
+  .container {
+    padding-inline: var(--space-5);
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lesson-header,
+  .lesson-text,
+  .objectives-list,
+  .example-box,
+  .key-points,
+  .summary-box,
+  .quiz-progress,
+  .question-text,
+  .option-list,
+  .feedback,
+  .quiz-nav,
+  .result-panel {
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+}
