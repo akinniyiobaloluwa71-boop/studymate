@@ -313,6 +313,447 @@ window.StudyMate.data = {
         },
       ],
     },
+    {
+      id: "math-poly-quadratic-equations",
+      subjectId: "mathematics",
+      levelId: "polytechnic",
+      title: "Solving Quadratic Equations by Factorisation",
+      description: "Learn to solve ax² + bx + c = 0 by finding factors.",
+      difficulty: "Intermediate",
+      estimatedTime: "12 min",
+      objectives: [
+        "Recognise a quadratic equation as an expression with a squared variable term.",
+        "Factorise a quadratic expression into two linear factors.",
+        "Use the zero-product principle to find both roots of the equation.",
+      ],
+      explanation: [
+        "A quadratic equation is an equation in which the highest power of the variable is 2. Its general form is ax² + bx + c = 0, where a, b, and c are numbers and a is not zero.",
+        "The standard form of a quadratic equation is written in descending powers of x. This makes it easier to recognise the squared term, the linear term, and the constant term.",
+        "Factorisation works by rewriting the quadratic expression as the product of two binomials. For example, x² + 5x + 6 becomes (x + 2)(x + 3), because 2 and 3 multiply to 6 and add to 5.",
+        "Once the equation is written as a product of factors, the zero-product principle states that if ab = 0, then a = 0 or b = 0. This is why a quadratic equation usually has two solutions.",
+      ],
+      examples: [
+        {
+          title: "Example A: Solve x² + 5x + 6 = 0",
+          problem: "x² + 5x + 6 = 0",
+          steps: [
+            "Find two numbers whose product is 6 and whose sum is 5. The numbers are 2 and 3.",
+            "Rewrite the middle term: x² + 2x + 3x + 6 = 0.",
+            "Group the terms: x(x + 2) + 3(x + 2) = 0.",
+            "Factorise the common bracket: (x + 2)(x + 3) = 0.",
+            "Set each factor equal to zero: x + 2 = 0 or x + 3 = 0.",
+            "Subtract 2 from both sides: x = -2.",
+            "Subtract 3 from both sides: x = -3.",
+            "Check: (-2)² + 5(-2) + 6 = 4 - 10 + 6 = 0. Correct.",
+            "Check: (-3)² + 5(-3) + 6 = 9 - 15 + 6 = 0. Correct.",
+          ],
+          answer: "x = -2 or x = -3",
+        },
+        {
+          title: "Example B: Solve x² - 7x + 12 = 0",
+          problem: "x² - 7x + 12 = 0",
+          steps: [
+            "Find two numbers whose product is 12 and whose sum is -7. The numbers are -3 and -4.",
+            "Rewrite the middle term: x² - 3x - 4x + 12 = 0.",
+            "Group the terms: x(x - 3) - 4(x - 3) = 0.",
+            "Factorise the common bracket: (x - 3)(x - 4) = 0.",
+            "Set each factor equal to zero: x - 3 = 0 or x - 4 = 0.",
+            "Add 3 to both sides: x = 3.",
+            "Add 4 to both sides: x = 4.",
+            "Check: 3² - 7(3) + 12 = 9 - 21 + 12 = 0. Correct.",
+            "Check: 4² - 7(4) + 12 = 16 - 28 + 12 = 0. Correct.",
+          ],
+          answer: "x = 3 or x = 4",
+        },
+      ],
+      keyPoints: [
+        "A quadratic equation contains a squared variable term.",
+        "Factorisation rewrites a quadratic as the product of two binomials.",
+        "Set each factor equal to zero to find the solutions.",
+        "Always verify each root by substitution into the original equation.",
+      ],
+      summary:
+        "Quadratic equations are solved by factorising into two linear factors and applying the zero-product principle. Each solution should be checked by substitution so that you can confirm it satisfies the original equation.",
+      questions: [
+        {
+          question: "Which of these is a quadratic equation?",
+          options: ["x + 4 = 0", "x² + 5x + 6 = 0", "2x³ - 1 = 0", "x = 7"],
+          correctIndex: 1,
+          explanation:
+            "A quadratic equation has a squared variable term as its highest power, so x² + 5x + 6 = 0 is the correct choice.",
+        },
+        {
+          question: "Factorise x² + 5x + 6.",
+          options: [
+            "(x + 1)(x + 6)",
+            "(x + 2)(x + 3)",
+            "(x - 2)(x - 3)",
+            "(x + 2)(x + 4)",
+          ],
+          correctIndex: 1,
+          explanation:
+            "The two numbers must multiply to 6 and add to 5, so 2 and 3 are the correct pair: (x + 2)(x + 3).",
+        },
+        {
+          question: "Factorise x² - 5x - 6.",
+          options: [
+            "(x - 6)(x + 1)",
+            "(x - 3)(x - 2)",
+            "(x + 6)(x - 1)",
+            "(x - 5)(x + 1)",
+          ],
+          correctIndex: 0,
+          explanation:
+            "The product is -6 and the sum is -5, so the factors are -6 and 1: (x - 6)(x + 1).",
+        },
+        {
+          question: "Solve x² + x - 6 = 0.",
+          options: [
+            "x = -3 or x = 2",
+            "x = 3 or x = -2",
+            "x = -6 or x = 1",
+            "x = 3 only",
+          ],
+          correctIndex: 0,
+          explanation:
+            "Factorise as (x + 3)(x - 2) = 0, then set each factor to zero to get x = -3 or x = 2.",
+        },
+        {
+          question: "Which check correctly verifies that x = -2 is a root of x² + 5x + 6 = 0?",
+          options: [
+            "(-2)² + 5(-2) + 6 = 4 - 10 + 6 = 0",
+            "(-2)² + 5(-2) + 6 = 4 + 10 + 6 = 20",
+            "(-2)² + 5(-2) + 6 = -4 - 10 + 6 = -8",
+            "(-2)² + 5(-2) + 6 = 4 - 5 + 6 = 5",
+          ],
+          correctIndex: 0,
+          explanation:
+            "Substituting x = -2 gives 4 - 10 + 6 = 0, so the equation is satisfied and -2 is a valid root.",
+        },
+      ],
+    },
+    {
+      id: "eng-poly-technical-report",
+      subjectId: "english",
+      levelId: "polytechnic",
+      title: "Writing a Technical Report",
+      description: "Structure, tone and language for engineering and science reports.",
+      difficulty: "Intermediate",
+      estimatedTime: "10 min",
+      objectives: [
+        "Identify the main sections of a technical report and their purposes.",
+        "Use formal, objective language suited to academic and engineering writing.",
+        "Write a clear conclusion that summarises findings and recommendations.",
+      ],
+      explanation: [
+        "A technical report is a formal document that presents information, procedures, findings, and recommendations in a clear structure. It is used in engineering, science, and applied studies to communicate results accurately.",
+        "A standard technical report usually includes a title, abstract, introduction, methodology, results, discussion, and conclusion. Each section has a specific purpose and helps the reader follow the report logically.",
+        "Objective language is based on facts and evidence rather than personal opinion. Subjective language includes personal judgement, emotion, or vague phrases such as ‘I think’ or ‘it seems good’.",
+        "Common mistakes in technical writing include using informal wording, mixing opinion with evidence, and including unnecessary detail. Reports are more reliable when they are precise, concise, and easy to follow.",
+        "Passive voice is often preferred in technical writing because it emphasises the process or result rather than the person performing the action. This creates a more formal and objective tone, especially in scientific and engineering contexts.",
+      ],
+      examples: [
+        {
+          title: "Example A: Rewrite informal language in a formal style",
+          problem: "Informal: 'I think the machine broke because the pressure was too high and the filter got blocked.'",
+          steps: [
+            "Replace personal opinion with objective wording: 'The machine failed due to excessive pressure.'",
+            "Add the second cause clearly: 'The machine failed due to excessive pressure and a blocked filter.'",
+            "Use formal academic tone: 'The machine failed due to excessive pressure and a blocked filter during operation.'",
+          ],
+          answer:
+            "The machine failed due to excessive pressure and a blocked filter during operation.",
+        },
+        {
+          title: "Example B: Conclusion paragraph with labelled functions",
+          problem: "Short conclusion paragraph",
+          steps: [
+            "Sentence 1 — Summarise the findings: 'The test results showed a 15% improvement in efficiency after the component update.'",
+            "Sentence 2 — Recommend action: 'It is recommended that the revised component be adopted in the next production cycle.'",
+            "Sentence 3 — State implication: 'This change should improve reliability and reduce maintenance costs over time.'",
+          ],
+          answer:
+            "The paragraph summarises the results, recommends a course of action, and states the likely practical outcome.",
+        },
+      ],
+      keyPoints: [
+        "A technical report has a clear structure with defined sections.",
+        "Formal writing uses objective, precise, and evidence-based language.",
+        "Passive voice is often used to keep the writing neutral and professional.",
+        "A conclusion should summarise findings and suggest the next step.",
+      ],
+      summary:
+        "A technical report communicates findings in a structured, formal way. Good reports use clear headings, objective language, and a conclusion that links evidence to practical recommendations.",
+      questions: [
+        {
+          question: "Where in a technical report would you place the procedure used to collect the data?",
+          options: ["Abstract", "Methodology", "Introduction", "Conclusion"],
+          correctIndex: 1,
+          explanation:
+            "The methodology section explains how the investigation was carried out, so it is the correct place for procedures and methods.",
+        },
+        {
+          question: "Which sentence uses the most formal style?",
+          options: [
+            "I think the results look good.",
+            "The results suggest improved efficiency.",
+            "The thing seemed okay to me.",
+            "It was not bad at all.",
+          ],
+          correctIndex: 1,
+          explanation:
+            "Formal writing avoids personal opinion and uses precise, objective wording: 'The results suggest improved efficiency.'",
+        },
+        {
+          question: "Which sentence is written in passive voice?",
+          options: [
+            "The engineer analysed the sample.",
+            "The sample was analysed by the engineer.",
+            "The engineer checks the sample.",
+            "The sample shows a pattern.",
+          ],
+          correctIndex: 1,
+          explanation:
+            "Passive voice focuses on the action performed on the subject: 'The sample was analysed by the engineer.'",
+        },
+        {
+          question: "What is the main purpose of an abstract in a technical report?",
+          options: [
+            "To provide a full discussion of the findings.",
+            "To give a brief overview of the aim, method, and key results.",
+            "To describe the bibliography only.",
+            "To express the writer's personal opinion.",
+          ],
+          correctIndex: 1,
+          explanation:
+            "An abstract is a short summary that gives the reader a clear overview of the report's purpose, method, and main findings.",
+        },
+        {
+          question: "Which sentence contains subjective language?",
+          options: [
+            "The system operated efficiently under load.",
+            "The results were consistent across three trials.",
+            "The design was clearly superior to the previous model.",
+            "The equipment was tested at 500°C.",
+          ],
+          correctIndex: 2,
+          explanation:
+            "'Clearly superior' is subjective because it expresses judgement rather than an objective fact supported by evidence.",
+        },
+      ],
+    },
+    {
+      id: "math-uni-differentiation-basics",
+      subjectId: "mathematics",
+      levelId: "university",
+      title: "Introduction to Differentiation",
+      description:
+        "Find the derivative of simple polynomial functions using the power rule.",
+      difficulty: "Intermediate",
+      estimatedTime: "12 min",
+      objectives: [
+        "Understand that a derivative measures the rate of change of a function.",
+        "Apply the power rule to differentiate a power of x.",
+        "Differentiate polynomial sums by working term by term.",
+      ],
+      explanation: [
+        "Differentiation finds the derivative of a function, which measures how quickly its output changes as its input changes. Geometrically, the derivative at a point is the slope of the curve at that point.",
+        "The derivative can be written as dy/dx when y depends on x, or as f'(x) when the function is named f. Both notations describe the rate of change with respect to x.",
+        "The power rule states that d/dx(x^n) = n·x^(n-1). Multiply by the original exponent, then reduce that exponent by one.",
+        "For a polynomial sum, differentiate each term separately and then combine the results. A constant has derivative zero because its value does not change as x changes.",
+      ],
+      examples: [
+        {
+          title: "Example A: Differentiate f(x) = x³",
+          problem: "f(x) = x³",
+          steps: [
+            "Apply the power rule: d/dx(x^n) = n·x^(n-1)",
+            "Here n = 3, so d/dx(x³) = 3·x^(3-1)",
+            "Simplify: f'(x) = 3x²",
+          ],
+          answer: "f'(x) = 3x²",
+        },
+        {
+          title: "Example B: Differentiate f(x) = 4x² + 3x - 5",
+          problem: "f(x) = 4x² + 3x - 5",
+          steps: [
+            "Differentiate each term separately",
+            "d/dx(4x²) = 4·2·x^(2-1) = 8x",
+            "d/dx(3x) = 3",
+            "d/dx(-5) = 0",
+            "Combine: f'(x) = 8x + 3",
+          ],
+          answer: "f'(x) = 8x + 3",
+        },
+      ],
+      keyPoints: [
+        "A derivative measures a function's rate of change and gives the curve's slope at a point.",
+        "dy/dx and f'(x) are notations for a derivative with respect to x.",
+        "The power rule multiplies by the exponent and reduces the exponent by one.",
+        "Differentiate polynomial terms separately; the derivative of a constant is zero.",
+      ],
+      summary:
+        "Differentiation measures how a function changes, and its derivative gives the slope of its graph. Apply the power rule to each polynomial term separately, remembering that constants differentiate to zero.",
+      questions: [
+        {
+          question: "What does the derivative of a function represent?",
+          options: [
+            "Its rate of change or the slope of its graph",
+            "Its largest output value",
+            "The area under its graph",
+            "Its value when x equals zero",
+          ],
+          correctIndex: 0,
+          explanation:
+            "A derivative represents the instantaneous rate of change of a function and geometrically gives the slope of its graph at a point.",
+        },
+        {
+          question: "Using the power rule, what is the derivative of x⁵?",
+          options: ["x⁴", "5x⁴", "5x⁵", "4x⁵"],
+          correctIndex: 1,
+          explanation:
+            "The power rule multiplies by the exponent and reduces the exponent by one: d/dx(x⁵) = 5x⁴.",
+        },
+        {
+          question: "What is the derivative of 3x⁴?",
+          options: ["3x³", "12x⁴", "12x³", "4x³"],
+          correctIndex: 2,
+          explanation:
+            "Keep the coefficient 3, multiply it by the exponent 4, and reduce the power to 3: d/dx(3x⁴) = 12x³.",
+        },
+        {
+          question: "Differentiate 2x³ + 5x.",
+          options: ["6x² + 5", "6x³ + 5", "2x² + 5x", "6x² + 5x"],
+          correctIndex: 0,
+          explanation:
+            "Differentiate each term: d/dx(2x³) = 6x² and d/dx(5x) = 5, so the derivative is 6x² + 5.",
+        },
+        {
+          question: "What is the derivative of the constant function f(x) = 9?",
+          options: ["9", "x", "1", "0"],
+          correctIndex: 3,
+          explanation:
+            "A constant does not change as x changes, so its rate of change and derivative are zero.",
+        },
+      ],
+    },
+    {
+      id: "eng-uni-academic-essay",
+      subjectId: "english",
+      levelId: "university",
+      title: "Structuring an Academic Essay",
+      description: "Plan, organise and write a clear argumentative essay.",
+      difficulty: "Intermediate",
+      estimatedTime: "11 min",
+      objectives: [
+        "Write a thesis statement that presents a specific, arguable claim.",
+        "Structure body paragraphs with a topic sentence, evidence, analysis, and a link.",
+        "Write a conclusion that synthesises the argument without introducing a new one.",
+      ],
+      explanation: [
+        "An academic essay develops a focused answer to a question or problem. It uses a logical argument and relevant evidence to help readers understand and assess the writer's position.",
+        "The thesis statement presents the essay's central claim and often indicates the direction of the argument. A strong thesis is specific and arguable rather than a vague statement of a topic.",
+        "The introduction gives readers context, establishes the essay's focus, and leads to the thesis. It should orient the reader without trying to present every detail of the argument.",
+        "Each body paragraph should develop one main point. A clear structure uses a topic sentence, relevant evidence, analysis explaining how the evidence supports the point, and a link to the thesis or next idea.",
+        "The conclusion brings the argument together by restating its significance and synthesising the main points. It should not introduce a new major claim or simply repeat the introduction word for word.",
+      ],
+      examples: [
+        {
+          title: "Example A: Strengthen a thesis statement",
+          problem: "Compare a weak thesis with a strong thesis.",
+          steps: [
+            "Weak: Social media is bad for students.",
+            "Why it's weak: vague, no argument, no direction",
+            "Strong: Social media use among university students correlates with reduced deep-reading ability because it rewards short-form attention.",
+            "Why it's strong: specific, arguable, gives a reason",
+          ],
+          answer:
+            "A strong thesis is specific, arguable and gives a reason.",
+        },
+        {
+          title: "Example B: Identify the parts of a body paragraph",
+          problem: "A paragraph about campus recycling",
+          steps: [
+            "Topic sentence: Campus recycling programmes can reduce the amount of waste sent to landfill.",
+            "Evidence: The university's annual facilities report recorded a 20% increase in recycled material after labelled bins were installed.",
+            "Analysis: This increase suggests that accessible, clearly marked bins can help students sort waste correctly.",
+            "Link: Expanding the programme across campus would therefore support the university's waste-reduction goal.",
+          ],
+          answer:
+            "The paragraph presents a claim, supports it with evidence, explains the evidence, and links the point to the wider argument.",
+        },
+      ],
+      keyPoints: [
+        "An academic essay develops a focused argument supported by evidence.",
+        "A strong thesis is specific, arguable, and gives the essay direction.",
+        "Body paragraphs connect a topic sentence to evidence through analysis.",
+        "A conclusion synthesises the argument without introducing a new major claim.",
+      ],
+      summary:
+        "A clear academic essay builds a focused argument around a specific thesis. Organise each body paragraph around one point supported by evidence and analysis, then use the conclusion to bring the argument together.",
+      questions: [
+        {
+          question: "What is the main purpose of a thesis statement?",
+          options: [
+            "To present the essay's central, arguable claim and guide its direction",
+            "To list every source used in the essay",
+            "To provide a detailed summary of every paragraph",
+            "To introduce an unrelated topic",
+          ],
+          correctIndex: 0,
+          explanation:
+            "A thesis statement presents the essay's central claim and guides the direction of the argument.",
+        },
+        {
+          question: "Which is the stronger thesis statement?",
+          options: [
+            "Social media is bad for students.",
+            "Many people use social media.",
+            "Universities should teach digital-literacy skills because evaluating online sources improves students' research.",
+            "This essay is about university libraries.",
+          ],
+          correctIndex: 2,
+          explanation:
+            "A strong thesis makes a specific, arguable claim and gives a reason; option C does both.",
+        },
+        {
+          question: "Which sentence is a topic sentence for a paragraph about public transport?",
+          options: [
+            "The city survey collected responses from 600 commuters.",
+            "Reliable public transport can reduce traffic congestion in the city.",
+            "For example, the number of buses increased last year.",
+            "This evidence supports investment in transit.",
+          ],
+          correctIndex: 1,
+          explanation:
+            "A topic sentence states the paragraph's main point, which the remaining sentences then develop and support.",
+        },
+        {
+          question: "In a body paragraph, which sentence is evidence rather than analysis?",
+          options: [
+            "This result shows why regular feedback matters.",
+            "Therefore, the policy should be expanded.",
+            "A 2024 survey found that 72% of participants completed the training.",
+            "This pattern may reflect improved access.",
+          ],
+          correctIndex: 2,
+          explanation:
+            "Evidence is verifiable information that supports a point; a survey result is evidence, while the other choices interpret or apply it.",
+        },
+        {
+          question: "What should a conclusion do?",
+          options: [
+            "Introduce a new major claim that was not argued in the essay.",
+            "Repeat the introduction word for word.",
+            "Add unrelated evidence without explaining its relevance.",
+            "Synthesise the main argument and its significance without adding a new major claim.",
+          ],
+          correctIndex: 3,
+          explanation:
+            "A conclusion synthesises the essay's argument and explains its significance; it should not introduce a new major claim.",
+        },
+      ],
+    },
   ],
 };
 

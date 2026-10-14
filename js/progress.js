@@ -102,6 +102,141 @@ window.StudyMate.progress = (function () {
     }
   }
 
+  // Return the initialized Supabase client when the auth module exposes it.
+  function getSupabaseClient() {
+    var auth = window.StudyMate.auth;
+    if (auth && typeof auth.getClient === "function") {
+      return auth.getClient();
+    }
+    return window.supabaseClient || null;
+  }
+
+  // Load validated progress for the currently signed-in user, or null on failure.
+  async function loadFromCloud() {
+    try {
+      var auth = window.StudyMate.auth;
+      var client = getSupabaseClient();
+      var user = auth && (await auth.getUser());
+      if (!client || !user) {
+        return null;
+      }
+
+      var result = await client
+        .from("progress")
+        .select("data")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (result.error) {
+        throw result.error;
+      }
+      return result.data ? result.data.data : null;
+    } catch (error) {
+      console.warn("Unable to load StudyMate progress from the cloud.", error);
+      return null;
+    }
+  }
+
+  // Save validated progress for the signed-in user without affecting local writes.
+  async function saveToCloud(state) {
+    try {
+      var auth = window.StudyMate.auth;
+      var client = getSupabaseClient();
+      var user = auth && (await auth.getUser());
+      if (!client || !user) {
+        return false;
+      }
+
+      var result = await client.from("progress").upsert(
+        {
+          user_id: user.id,
+          data: validateState(state),
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" },
+      );
+      if (result.error) {
+        throw result.error;
+      }
+      return true;
+    } catch (error) {
+      console.warn("Unable to save StudyMate progress to the cloud.", error);
+      return false;
+    }
+  }
+
+  // Merge local and cloud progress, persist the merge locally and remotely, and return it.
+  async function hydrateFromCloud() {
+    try {
+      var cloudState = await loadFromCloud();
+      if (!cloudState) {
+        var currentState = validateState(getState());
+        await saveToCloud(currentState);
+        return currentState;
+      }
+
+      var localState = validateState(getState());
+      var validatedCloudState = validateState(cloudState);
+      var completedLessons = localState.completedLessons.concat(
+        validatedCloudState.completedLessons,
+      );
+      completedLessons = completedLessons.filter(function (topicId, index) {
+        return completedLessons.indexOf(topicId) === index;
+      });
+
+      var quizAttempts = localState.quizAttempts.concat(
+        validatedCloudState.quizAttempts,
+      );
+      var seenAttempts = Object.create(null);
+      quizAttempts = quizAttempts
+        .filter(function (attempt) {
+          var key = attempt.topicId + "\u0000" + attempt.date;
+          if (seenAttempts[key]) {
+            return false;
+          }
+          seenAttempts[key] = true;
+          return true;
+        })
+        .sort(function (first, second) {
+          return Date.parse(second.date) - Date.parse(first.date);
+        });
+
+      var levelId =
+        isRecord(cloudState) && validLevels.indexOf(cloudState.levelId) !== -1
+          ? cloudState.levelId
+          : localState.levelId;
+      var localLatest = localState.quizAttempts
+        .slice()
+        .sort(function (first, second) {
+          return Date.parse(second.date) - Date.parse(first.date);
+        })[0];
+      var cloudLatest = validatedCloudState.quizAttempts
+        .slice()
+        .sort(function (first, second) {
+          return Date.parse(second.date) - Date.parse(first.date);
+        })[0];
+      var lastTopicId = localState.lastTopicId || validatedCloudState.lastTopicId;
+      if (
+        cloudLatest &&
+        (!localLatest || Date.parse(cloudLatest.date) > Date.parse(localLatest.date))
+      ) {
+        lastTopicId = validatedCloudState.lastTopicId;
+      }
+
+      var mergedState = validateState({
+        levelId: levelId,
+        completedLessons: completedLessons,
+        quizAttempts: quizAttempts,
+        lastTopicId: lastTopicId,
+      });
+      saveState(mergedState);
+      await saveToCloud(mergedState);
+      return mergedState;
+    } catch (error) {
+      console.warn("Unable to hydrate StudyMate progress from the cloud.", error);
+      return getState();
+    }
+  }
+
   // Return the validated current level identifier.
   function getLevel() {
     try {
@@ -129,7 +264,11 @@ window.StudyMate.progress = (function () {
         prefs = {};
       }
       prefs.levelId = levelId;
-      return window.StudyMate.storage.write("prefs", prefs) && progressSaved;
+      var prefsSaved = window.StudyMate.storage.write("prefs", prefs);
+      if (progressSaved) {
+        saveToCloud(state);
+      }
+      return prefsSaved && progressSaved;
     } catch (error) {
       console.warn("Unable to save StudyMate level preference.", error);
       return false;
@@ -147,7 +286,11 @@ window.StudyMate.progress = (function () {
     }
     state.completedLessons.push(topicId);
     state.lastTopicId = topicId;
-    return saveState(state);
+    var saved = saveState(state);
+    if (saved) {
+      saveToCloud(state);
+    }
+    return saved;
   }
 
   // Check whether a topic is already marked complete.
@@ -180,7 +323,11 @@ window.StudyMate.progress = (function () {
     var state = getState();
     state.quizAttempts.unshift(attempt);
     state.lastTopicId = topicId;
-    return saveState(state) ? attempt : null;
+    var saved = saveState(state);
+    if (saved) {
+      saveToCloud(state);
+    }
+    return saved ? attempt : null;
   }
 
   // Return the newest score recorded for a topic, or null when none exists.
@@ -234,7 +381,11 @@ window.StudyMate.progress = (function () {
     var state = getState();
     state.lastTopicId =
       typeof topicId === "string" && topicId.length > 0 ? topicId : null;
-    return saveState(state);
+    var saved = saveState(state);
+    if (saved) {
+      saveToCloud(state);
+    }
+    return saved;
   }
 
   // Return the last visited topic identifier or null.
@@ -245,7 +396,11 @@ window.StudyMate.progress = (function () {
   // Remove all saved progress and report whether removal succeeded.
   function resetAll() {
     try {
-      return window.StudyMate.storage.remove("progress");
+      var removed = window.StudyMate.storage.remove("progress");
+      if (removed) {
+        saveToCloud(createDefaultState());
+      }
+      return removed;
     } catch (error) {
       console.warn("Unable to reset StudyMate progress.", error);
       return false;
@@ -269,5 +424,6 @@ window.StudyMate.progress = (function () {
     setLastTopic: setLastTopic,
     getLastTopic: getLastTopic,
     resetAll: resetAll,
+    hydrateFromCloud: hydrateFromCloud,
   };
 })();

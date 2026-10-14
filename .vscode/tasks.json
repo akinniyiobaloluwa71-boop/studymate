@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Serve StudyMate on port 8000",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-m",
+				"http.server",
+				"8000",
+				"--bind",
+				"127.0.0.1"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check StudyMate localhost response",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"-c",
+				"import urllib.request; r=urllib.request.urlopen('http://127.0.0.1:8000', timeout=5); print(r.status, r.headers.get('Content-Type'))"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Python launcher",
+			"type": "shell",
+			"command": "py",
+			"args": [
+				"-V"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

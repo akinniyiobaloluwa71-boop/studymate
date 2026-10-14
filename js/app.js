@@ -77,8 +77,10 @@ window.StudyMate = window.StudyMate || {};
   }
 
   // Render the home page hero, progress summary, and subject cards.
-  function homeView() {
+  async function homeView() {
     var data = window.StudyMate.data;
+    var user =
+      window.StudyMate.auth && (await window.StudyMate.auth.getUser());
     var levelId = getCurrentLevelId();
     var completedCount = window.StudyMate.progress.getCompletedCount();
     var recentAttempts = window.StudyMate.progress.getRecentAttempts(1);
@@ -110,6 +112,9 @@ window.StudyMate = window.StudyMate || {};
         '<section><h2>Your progress</h2>' +
         progressMarkup +
         "</section>" +
+        (!user
+          ? '<section class="notice-banner"><p>You can use StudyMate without an account. Sign up to save your progress across all your devices.</p><a class="btn btn-primary" href="#/signup">Sign up</a> <a class="btn btn-secondary" href="#/login">Sign in</a></section>'
+          : "") +
         '<section><h2>Explore subjects</h2><div class="card-grid">' +
         // Render each available subject card.
         data.subjects
@@ -119,6 +124,38 @@ window.StudyMate = window.StudyMate || {};
           .join("") +
         "</div></section>" +
         '<p class="notice-banner">Progress is saved in this browser on this device only.</p>'
+    );
+  }
+
+  // Render the account creation form and its sign-in link.
+  function signupView() {
+    return container(
+      '<section class="card"><h1>Create your StudyMate account</h1>' +
+        '<form id="signup-form">' +
+        '<label for="signup-email">Email</label>' +
+        '<input type="email" id="signup-email" required>' +
+        '<label for="signup-password">Password (min 6 characters)</label>' +
+        '<input type="password" id="signup-password" required minlength="6">' +
+        '<button type="submit" class="btn btn-primary btn-block">Create account</button>' +
+        '</form><div id="auth-message" role="status" aria-live="polite"></div>' +
+        '<p><a href="#/login">Already have an account? Sign in</a></p>' +
+        '<p>Your progress will be saved to your account and synced across your devices.</p></section>'
+    );
+  }
+
+  // Render the sign-in form and its account creation link.
+  function loginView() {
+    return container(
+      '<section class="card"><h1>Sign in to StudyMate</h1>' +
+        '<form id="login-form">' +
+        '<label for="login-email">Email</label>' +
+        '<input type="email" id="login-email" required>' +
+        '<label for="login-password">Password (min 6 characters)</label>' +
+        '<input type="password" id="login-password" required minlength="6">' +
+        '<button type="submit" class="btn btn-primary btn-block">Sign in</button>' +
+        '</form><div id="auth-message" role="status" aria-live="polite"></div>' +
+        '<p><a href="#/signup">Don\'t have an account? Sign up</a></p>' +
+        '<p>Your progress will be saved to your account and synced across your devices.</p></section>'
     );
   }
 
@@ -697,10 +734,12 @@ window.StudyMate = window.StudyMate || {};
     { pattern: /^#\/quiz\/([^/]+)$/, view: quizView, params: ["topicId"] },
     { pattern: /^#\/dashboard$/, view: dashboardView, params: [] },
     { pattern: /^#\/search$/, view: searchView, params: [] },
+    { pattern: /^#\/signup$/, view: signupView, params: [] },
+    { pattern: /^#\/login$/, view: loginView, params: [] },
   ];
 
   // Match the current hash, render its view, then focus and scroll the app.
-  function render() {
+  async function render() {
     if (!appElement) {
       appElement = qs("#app");
     }
@@ -719,11 +758,21 @@ window.StudyMate = window.StudyMate || {};
           markup = notFoundView();
           break;
         }
-        markup = ROUTES[index].view.apply(null, params);
+        markup = await ROUTES[index].view.apply(null, params);
         break;
       }
     }
     appElement.innerHTML = markup === null ? notFoundView() : markup;
+    var accountArea = qs("#account-area");
+    if (accountArea) {
+      var user =
+        window.StudyMate.auth && (await window.StudyMate.auth.getUser());
+      accountArea.innerHTML = user
+        ? "Hi, " +
+          escapeHtml(user.email) +
+          ' <button type="button" data-action="sign-out" class="btn btn-ghost">Sign out</button>'
+        : '<a href="#/login" class="nav-link">Sign in</a> <a href="#/signup" class="nav-link">Sign up</a>';
+    }
     if (hash === "#/search" || hash === "") {
       renderSearchResults();
     }
@@ -732,14 +781,19 @@ window.StudyMate = window.StudyMate || {};
   }
 
   // Handle delegated click actions from the app and the external header control.
-  function handleAction(event) {
+  async function handleAction(event) {
     var target = event.target.closest("[data-action]");
     if (!target) {
       return;
     }
     var action = target.getAttribute("data-action");
     var id = target.getAttribute("data-id");
-    if (action === "go-level") {
+    if (action === "sign-out") {
+      if (window.StudyMate.auth) {
+        await window.StudyMate.auth.signOut();
+      }
+      navigate("#/home");
+    } else if (action === "go-level") {
       navigate("#/level");
     } else if (action === "set-level") {
       if (window.StudyMate.progress.setLevel(id)) {
@@ -803,6 +857,48 @@ window.StudyMate = window.StudyMate || {};
     }
   }
 
+  // Submit signup and login forms through the auth module and display status messages.
+  async function handleSubmit(event) {
+    var form = event.target;
+    if (form.id !== "signup-form" && form.id !== "login-form") {
+      return;
+    }
+
+    event.preventDefault();
+    var isSignup = form.id === "signup-form";
+    var email = qs(isSignup ? "#signup-email" : "#login-email").value;
+    var password = qs(isSignup ? "#signup-password" : "#login-password").value;
+    var message = qs("#auth-message");
+    var button = form.querySelector('button[type="submit"]');
+    message.textContent = isSignup ? "Creating account..." : "Signing in...";
+    message.classList.remove("error-state");
+    button.disabled = true;
+
+    var auth = window.StudyMate.auth;
+    var result;
+    try {
+      result = auth
+        ? await (isSignup
+            ? auth.signUp(email, password)
+            : auth.signIn(email, password))
+        : { error: "Authentication is not available right now." };
+    } catch (error) {
+      result = { error: "Authentication could not be completed." };
+    }
+
+    if (result && result.error) {
+      message.textContent = result.error;
+      message.classList.add("error-state");
+      button.disabled = false;
+    } else if (result && result.user) {
+      navigate("#/dashboard");
+    } else {
+      message.textContent = "Authentication could not be completed.";
+      message.classList.add("error-state");
+      button.disabled = false;
+    }
+  }
+
   // Handle updated search filter selections without replacing the page.
   function handleChange(event) {
     if (event.target.id === "search-level") {
@@ -833,6 +929,7 @@ window.StudyMate = window.StudyMate || {};
     appElement.addEventListener("click", handleAction);
     appElement.addEventListener("change", handleChange);
     appElement.addEventListener("input", handleInput);
+    appElement.addEventListener("submit", handleSubmit);
     var header = qs(".site-header");
     if (header) {
       header.addEventListener("click", handleAction);
@@ -840,6 +937,20 @@ window.StudyMate = window.StudyMate || {};
     var yearElement = qs("#current-year");
     if (yearElement) {
       yearElement.textContent = String(new Date().getFullYear());
+    }
+    var auth = window.StudyMate.auth;
+    if (auth && auth.init()) {
+      auth.onChange(function (event, session) {
+        render();
+        if (event === "SIGNED_IN" && session) {
+          window.StudyMate.progress.hydrateFromCloud().then(function () {
+            render();
+          });
+        }
+      });
+      window.StudyMate.progress.hydrateFromCloud().then(function () {
+        render();
+      });
     }
     render();
   }
