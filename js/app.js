@@ -268,6 +268,50 @@ window.StudyMate = window.StudyMate || {};
     );
   }
 
+  // Render saved topics in the order they were most recently bookmarked.
+  function bookmarksView() {
+    var data = window.StudyMate.data;
+    var topics = window.StudyMate.progress
+      .getBookmarks()
+      .map(function (topicId) {
+        return data.getTopicById(topicId);
+      })
+      .filter(function (topic) {
+        return Boolean(topic);
+      });
+    if (!topics.length) {
+      return container(
+        '<h1>Your bookmarks</h1><section class="empty-state"><p>No bookmarks yet. Tap ☆ Bookmark on any lesson to save it here.</p><a href="#/subjects">Browse subjects</a></section>'
+      );
+    }
+    var topicMarkup = topics
+      .map(function (topic) {
+        return (
+          '<article class="topic-item"><div><h2>' +
+          escapeHtml(topic.title) +
+          "</h2><p>" +
+          escapeHtml(topic.description) +
+          '</p><div class="topic-meta"><span class="badge badge-' +
+          escapeHtml(String(topic.difficulty || "").toLowerCase()) +
+          '">' +
+          escapeHtml(topic.difficulty) +
+          "</span><span>" +
+          escapeHtml(topic.estimatedTime) +
+          '</span></div></div><div><a class="btn btn-primary" href="#/lesson/' +
+          escapeHtml(encodeURIComponent(topic.id)) +
+          '">Open lesson</a> <button type="button" class="btn btn-ghost" data-action="toggle-bookmark" data-id="' +
+          escapeHtml(topic.id) +
+          '">Remove</button></div></article>'
+        );
+      })
+      .join("");
+    return container(
+      '<h1>Your bookmarks</h1><section class="attempt-list">' +
+        topicMarkup +
+        "</section>"
+    );
+  }
+
   // Render a lesson with objectives, explanation, examples, and actions.
   function lessonView(topicId) {
     var data = window.StudyMate.data;
@@ -278,6 +322,7 @@ window.StudyMate = window.StudyMate || {};
     window.StudyMate.progress.setLastTopic(topicId);
     var level = data.getLevelById(topic.levelId);
     var complete = window.StudyMate.progress.isLessonComplete(topicId);
+    var bookmarked = window.StudyMate.progress.isBookmarked(topicId);
     var objectives = Array.isArray(topic.objectives) ? topic.objectives : [];
     var paragraphs = Array.isArray(topic.explanation) ? topic.explanation : [];
     var examples = Array.isArray(topic.examples) ? topic.examples : [];
@@ -289,7 +334,13 @@ window.StudyMate = window.StudyMate || {};
         '<header class="lesson-header"><h1>' +
         escapeHtml(topic.title) +
         (complete ? ' <span class="status-chip completed">Completed</span>' : "") +
-        '</h1><div class="topic-meta"><span class="badge badge-' +
+        '</h1><button type="button" class="' +
+        (bookmarked ? "btn btn-secondary" : "btn btn-ghost") +
+        '" data-action="toggle-bookmark" data-id="' +
+        escapeHtml(topicId) +
+        '">' +
+        (bookmarked ? "★ Bookmarked" : "☆ Bookmark") +
+        '</button><div class="topic-meta"><span class="badge badge-' +
         escapeHtml(String(topic.difficulty || "").toLowerCase()) +
         '">' +
         escapeHtml(topic.difficulty) +
@@ -416,7 +467,7 @@ window.StudyMate = window.StudyMate || {};
         "</p><p>Score " +
         escapeHtml(score.correct) +
         " / " +
-        escapeHtml(score.total) +
+        escapeHtml(quizState.questions.length) +
         "</p></section>" +
         '<section><h2>Answer review</h2><div class="attempt-list">' +
         review +
@@ -730,6 +781,7 @@ window.StudyMate = window.StudyMate || {};
     { pattern: /^#\/level$/, view: levelView, params: [] },
     { pattern: /^#\/subjects$/, view: subjectsView, params: [] },
     { pattern: /^#\/subjects\/([^/]+)$/, view: topicsView, params: ["subjectId"] },
+    { pattern: /^#\/bookmarks$/, view: bookmarksView, params: [] },
     { pattern: /^#\/lesson\/([^/]+)$/, view: lessonView, params: ["topicId"] },
     { pattern: /^#\/quiz\/([^/]+)$/, view: quizView, params: ["topicId"] },
     { pattern: /^#\/dashboard$/, view: dashboardView, params: [] },
@@ -801,6 +853,9 @@ window.StudyMate = window.StudyMate || {};
       }
     } else if (action === "complete-lesson") {
       window.StudyMate.progress.markLessonComplete(id);
+      render();
+    } else if (action === "toggle-bookmark") {
+      window.StudyMate.progress.toggleBookmark(id);
       render();
     } else if (action === "select-option") {
       window.StudyMate.quiz.selectAnswer(Number(target.getAttribute("data-index")));

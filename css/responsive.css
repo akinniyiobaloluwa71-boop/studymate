@@ -14,6 +14,12 @@ body,
 }
 
 @media (max-width: 599px) {
+  .site-header {
+    height: auto;
+    min-height: var(--header-height);
+    flex-wrap: wrap;
+  }
+
   .site-nav {
     flex: 1 1 100%;
     gap: var(--space-1);

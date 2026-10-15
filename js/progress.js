@@ -9,6 +9,7 @@ window.StudyMate.progress = (function () {
       levelId: "secondary",
       completedLessons: [],
       quizAttempts: [],
+      bookmarks: [],
       lastTopicId: null,
     };
   }
@@ -28,6 +29,17 @@ window.StudyMate.progress = (function () {
       ? raw.completedLessons.filter(function (topicId) {
           return typeof topicId === "string" && topicId.length > 0;
         })
+      : [];
+    var bookmarks = Array.isArray(raw.bookmarks)
+      ? raw.bookmarks.reduce(function (topicIds, topicId) {
+          if (
+            typeof topicId === "string" &&
+            topicIds.indexOf(topicId) === -1
+          ) {
+            topicIds.push(topicId);
+          }
+          return topicIds;
+        }, [])
       : [];
     var quizAttempts = Array.isArray(raw.quizAttempts)
       ? raw.quizAttempts.reduce(function (attempts, entry) {
@@ -70,6 +82,7 @@ window.StudyMate.progress = (function () {
       levelId: validLevels.indexOf(raw.levelId) !== -1 ? raw.levelId : "secondary",
       completedLessons: completedLessons,
       quizAttempts: quizAttempts,
+      bookmarks: bookmarks,
       lastTopicId:
         typeof raw.lastTopicId === "string" && raw.lastTopicId.length > 0
           ? raw.lastTopicId
@@ -226,6 +239,7 @@ window.StudyMate.progress = (function () {
         levelId: levelId,
         completedLessons: completedLessons,
         quizAttempts: quizAttempts,
+        bookmarks: localState.bookmarks.concat(validatedCloudState.bookmarks),
         lastTopicId: lastTopicId,
       });
       saveState(mergedState);
@@ -296,6 +310,35 @@ window.StudyMate.progress = (function () {
   // Check whether a topic is already marked complete.
   function isLessonComplete(topicId) {
     return getState().completedLessons.indexOf(topicId) !== -1;
+  }
+
+  // Add or remove a bookmark and sync the updated state in the background.
+  function toggleBookmark(topicId) {
+    if (typeof topicId !== "string" || topicId.length === 0) {
+      return false;
+    }
+    var state = getState();
+    var index = state.bookmarks.indexOf(topicId);
+    var added = index === -1;
+    if (added) {
+      state.bookmarks.unshift(topicId);
+    } else {
+      state.bookmarks.splice(index, 1);
+    }
+    if (saveState(state)) {
+      saveToCloud(state);
+    }
+    return added;
+  }
+
+  // Check whether a topic is bookmarked.
+  function isBookmarked(topicId) {
+    return getState().bookmarks.indexOf(topicId) !== -1;
+  }
+
+  // Return bookmarked topic identifiers newest first.
+  function getBookmarks() {
+    return getState().bookmarks.slice();
   }
 
   // Validate, record, and return a new quiz attempt.
@@ -415,6 +458,9 @@ window.StudyMate.progress = (function () {
     setLevel: setLevel,
     markLessonComplete: markLessonComplete,
     isLessonComplete: isLessonComplete,
+    toggleBookmark: toggleBookmark,
+    isBookmarked: isBookmarked,
+    getBookmarks: getBookmarks,
     recordQuizAttempt: recordQuizAttempt,
     getLatestScore: getLatestScore,
     getAttemptsForTopic: getAttemptsForTopic,
